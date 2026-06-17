@@ -88,6 +88,12 @@ const IND_CATALOGUE = [
 const IND_MAP = Object.fromEntries(IND_CATALOGUE.map(d => [d.id, d]));
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
+const APP_VERSION = "2";
+if (localStorage.getItem("appVersion") !== APP_VERSION) {
+  localStorage.clear();
+  localStorage.setItem("appVersion", APP_VERSION);
+}
+
 (async () => {
   const res = await fetch("/api/symbols");
   const data = await res.json();
@@ -134,7 +140,7 @@ function destroyPane(pane) {
 
 // ── Pane factory ──────────────────────────────────────────────────────────────
 function makePane(i, el) {
-  const defaultSrc = i % 2 === 0 ? "hyperliquid" : "yfinance";
+  const defaultSrc = i === 0 ? "tradingview" : (i % 2 === 0 ? "hyperliquid" : "yfinance");
 
   const pane = {
     index:       i,
@@ -225,6 +231,7 @@ function populateSymbolDatalist(dl, source) {
 }
 
 function defaultSymbol(source) {
+  if (source === "tradingview") return "XAUUSD:FX_IDC";
   const groups = SYMBOL_LISTS[source] || {};
   const first  = Object.values(groups)[0];
   return first?.[0] || "BTC";
