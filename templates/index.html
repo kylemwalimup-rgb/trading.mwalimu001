@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trading Dashboard</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <!-- ── Top bar ───────────────────────────────────────────────── -->
+  <header class="topbar">
+    <span class="brand">⬛ TradingDash</span>
+    <label class="chart-count-label">
+      Charts
+      <select id="chart-count-select">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="4" selected>4</option>
+        <option value="6">6</option>
+        <option value="8">8</option>
+      </select>
+    </label>
+  </header>
+
+  <!-- ── Chart grid ────────────────────────────────────────────── -->
+  <main id="grid" class="grid"></main>
+
+  <!-- ── Pane template ────────────────────────────────────────── -->
+  <template id="pane-tpl">
+    <div class="pane">
+      <div class="pane-toolbar">
+        <select class="src-select">
+          <option value="hyperliquid">Hyperliquid</option>
+          <option value="yfinance">yfinance</option>
+        </select>
+
+        <!-- Searchable symbol input backed by datalist — IDs stamped by makePane() -->
+        <div class="sym-wrap">
+          <input  class="sym-input" placeholder="Symbol…" autocomplete="off" spellcheck="false" />
+          <datalist class="sym-datalist"></datalist>
+        </div>
+
+        <select class="tf-select"></select>
+
+        <button class="ind-btn" title="Add indicator">+ Indicators</button>
+
+        <div class="ticker-bar">
+          <span class="ticker-symbol"></span>
+          <span class="ticker-price">—</span>
+        </div>
+      </div>
+
+      <!-- active indicator chips -->
+      <div class="ind-chips"></div>
+
+      <!-- indicator picker popup -->
+      <div class="ind-popup hidden"></div>
+
+      <!-- chart area: main + optional sub-panels -->
+      <div class="charts-stack">
+        <div class="main-chart-container"></div>
+      </div>
+    </div>
+  </template>
+
+  <!-- ── Custom Indicator Modal ────────────────────────────────── -->
+  <div id="custom-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Custom Indicator</span>
+        <button class="modal-close" title="Close">×</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button class="tab-btn tab-js  active">JavaScript</button>
+        <button class="tab-btn tab-pine">PineScript <span class="beta-tag">beta</span></button>
+      </div>
+
+      <div class="modal-help">
+        <span class="tab-js-help">
+          <code>close open high low volume</code> arrays · <code>ta.sma(src,p)</code> <code>ta.ema</code> <code>ta.rsi</code> <code>ta.macd</code> <code>ta.bb</code> <code>ta.stoch</code> <code>ta.atr</code> <code>ta.obv</code> <code>ta.vwap</code> · <code>vadd vsub vmul vdiv nz</code> · <code>plot(arr,{title,color,overlay})</code> <code>hline(val,{title,color})</code>
+        </span>
+        <span class="tab-pine-help hidden">
+          Subset of Pine v5: <code>ta.*</code> · <code>plot()</code> <code>hline()</code> <code>input()</code> · <code>color.*</code> · <code>na</code> <code>nz()</code> <code>math.*</code> · Series indexing <code>close[1]</code> · <em>Series arithmetic not auto-vectorised — use <code>vadd(a,b)</code></em>
+        </span>
+      </div>
+
+      <textarea class="pine-editor" spellcheck="false" rows="16"></textarea>
+
+      <div class="pine-transpiled-wrap hidden">
+        <div class="pine-transpiled-label">Transpiled JS:</div>
+        <pre class="pine-transpiled"></pre>
+      </div>
+
+      <div class="pine-error"></div>
+
+      <div class="modal-footer">
+        <button class="pine-cancel btn-secondary">Cancel</button>
+        <button class="pine-apply  btn-primary">Apply to Chart</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+  <script src="/static/js/indicators.js"></script>
+  <script src="/static/js/pine.js"></script>
+  <!-- datalist IDs are stamped by makePane() in dashboard.js -->
+  <script src="/static/js/dashboard.js"></script>
+  <script>
+    // Wire Pine/JS tab toggle help text in modal
+    (function() {
+      const modal = document.getElementById("custom-modal");
+      modal.querySelector(".tab-js").addEventListener("click", () => {
+        modal.querySelector(".tab-js-help").classList.remove("hidden");
+        modal.querySelector(".tab-pine-help").classList.add("hidden");
+        modal.querySelector(".pine-transpiled-wrap").classList.add("hidden");
+      });
+      modal.querySelector(".tab-pine").addEventListener("click", () => {
+        modal.querySelector(".tab-pine-help").classList.remove("hidden");
+        modal.querySelector(".tab-js-help").classList.add("hidden");
+      });
+    })();
+  </script>
+</body>
+</html>
