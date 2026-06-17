@@ -88,7 +88,7 @@ const IND_CATALOGUE = [
 const IND_MAP = Object.fromEntries(IND_CATALOGUE.map(d => [d.id, d]));
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
-const APP_VERSION = "2";
+const APP_VERSION = "3";
 if (localStorage.getItem("appVersion") !== APP_VERSION) {
   localStorage.clear();
   localStorage.setItem("appVersion", APP_VERSION);
@@ -140,7 +140,7 @@ function destroyPane(pane) {
 
 // ── Pane factory ──────────────────────────────────────────────────────────────
 function makePane(i, el) {
-  const defaultSrc = i === 0 ? "tradingview" : (i % 2 === 0 ? "hyperliquid" : "yfinance");
+  const defaultSrc = "tradingview";
 
   const pane = {
     index:       i,
